@@ -1,0 +1,111 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+.aaa{
+	margin:0 auto;
+	width : 1000px;
+	padding-top: 100px; 
+}
+.list{
+	width: 1000px;
+	height: 30px;
+    display: flex;
+}
+
+.PCname{
+	width: 78px;
+	height: 30px;
+	border: 1px solid #ccc;
+	line-height: 30px;
+}
+
+.PCstate{
+	width: 78px;
+	height: 30px;
+	border: 1px solid #ccc;
+	line-height: 30px;
+}
+
+.PClen{
+	width: 78px;
+	height: 30px;
+	border: 1px solid #ccc;
+	line-height: 30px;
+}
+
+.rate{
+	width: 438px;
+	height: 30px;
+	border: 1px solid #ccc;
+	line-height: 30px;
+}
+
+.arrive-time{
+	width: 78px;
+	height: 30px;
+	border: 1px solid #ccc;
+	line-height: 30px;
+}
+
+.service-time{
+	width: 78px;
+	height: 30px;
+	border: 1px solid #ccc;
+	line-height: 30px;
+}
+
+.finish-time{
+	width: 78px;
+	height: 30px;
+	border: 1px solid #ccc;
+	line-height: 30px;
+}
+
+.round-time{
+	width: 78px;
+	height: 30px;
+	border: 1px solid #ccc;
+	line-height: 30px;
+}
+
+.rateDom{
+	background-color: red;	
+	height: 100%;
+	width: 0%;
+}
+
+.time{
+	border: none;
+	height: 100%;
+	width: 100%;
+	outline: none;
+	font-size: 1.1em;
+}
+
+.btndiv{
+	padding-top: 30px;
+	width: 250px;
+	margin: 0 auto;
+}
+
+.btn{
+	width: 120px;
+	height: 50px;
+	background-color: blue;
+	
+	border-radius: 20px;
+	color: #fff;
+	font-size: 16px;
+	outline: none;
+}
+.btn:hover{
+	opacity: 0.6;
+	cursor: pointer;
+}
+.select{
+	display: flex;
+}
+.select input{
+	margin-left: 30px;
+}

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>progress</title>
+	<link rel="stylesheet" type="text/css" href="./1.css">
+</head>
+<body >
+	<div class="aaa" id="list">
+		<div class="list">
+			<div class="PCname">作业名</div>
+			<div class="PCstate">作业状态</div>
+			<div class="PClen">作业长度</div>
+			<div class="rate">进度</div>
+			<div class="arrive-time">到达时间</div>
+			<div class="service-time">运行时间</div>
+			<div class="finish-time">完成时间</div>
+			<div class="round-time">周转时间</div>
+		</div>	
+	</div>
+	<div class="btndiv select">
+
+		<select id="select">
+			<option value="1">时间轮转片</option>
+			<option value="2">先来先服务</option>
+			<option value="3">最短剩余时间</option>
+			<option value="4">短作业优先</option>
+		</select>
+
+		<input type="button" value="开始" id="btn2" class="btn"/>
+	</div>
+	<script>
+		function work(name){
+			this.status = 1;
+			this.len = random(50,100);
+			this.race = 0;
+			this.name = name;
+			this.arrive = 0;
+		}
+		work.prototype.createListItem = function (){
+			let dom = document.createElement("div");
+			dom.classList.add("list");
+			dom.innerHTML = `
+							<div class="PCname">${this.name}</div>
+							<div class="PCstate">就绪</div>
+							<div class="PClen">${this.len}</div>
+							<div class="rate"></div>
+							<div class="arrive-time"><input type="text" class="time" value="0"></div>
+							<div class="service-time">${this.race}</div>
+							<div class="finish-time">完成时间</div>
+							<div class="round-time">周转时间</div>
+						`
+			this.rateDom = document.createElement("div");
+			this.rateDom.innerHTML = '';
+			this.rateDom.classList.add("rateDom");
+			dom.querySelector(".rate").appendChild(this.rateDom);
+			let len = this.len;
+			dom.querySelector("input").oninput = function (e) {
+				let value = e.target.value;
+				value=value.replace(/[^\d]/g,'');
+				if(value>len){
+					value = len;
+				}
+				e.target.value = value;
+			}
+			this.dom = dom;
+			this.raceDom = this.dom.querySelector(".service-time");
+			document.getElementById("list").appendChild(dom);
+		}
+		work.prototype.compliment = function(runTime){
+			this.dom.querySelector(".PCstate").innerText = "完成";
+			this.dom.querySelector(".service-time").innerText = this.race;
+			
+			this.dom.querySelector(".finish-time").innerText = runTime;
+			this.dom.querySelector(".round-time").innerText = runTime - this.arrive;
+			this.dom.querySelector("input").disabled = false;
+		}
+		work.prototype.start = function(){
+			let input = this.dom.querySelector("input");
+			this.arrive = +input.value;
+			input.disabled = true;
+			this.dom.querySelector(".PCstate").innerText = "执行";
+		}
+		work.prototype.run = function(runTime,a){
+
+				if(runTime<this.arrive) return 0;
+
+				this.race++;
+				if(this.len>this.race){
+					this.raceDom.innerText = this.race;
+					this.rateDom.style.width =  (this.race/ this.len )*100  + "%";
+					return 1;
+				}
+				if(a==1){
+					runTime++;
+				}
+				if(this.len <= this.race){
+					this.raceDom.innerText = this.race;
+					this.rateDom.style.width =  (this.race/ this.len )*100  + "%";
+					this.compliment(runTime);
+					return 2;
+				}
+		}
+		work.prototype.init = function(len){
+			this.status = 1;
+			this.race = 0;
+			this.arrive = 0;
+			this.dom.querySelector(".PCstate").innerText = "就绪";
+			this.rateDom.style.width =  "0%";
+			this.dom.querySelector(".finish-time").innerText = 0;
+			this.dom.querySelector(".round-time").innerText = 0;
+			this.dom.querySelector(".service-time").innerText = this.race;
+			this.dom.querySelector(".PClen").innerText = this.len;
+		}
+		let arr = [],arr2 = [];
+		let btn2 = document.getElementById("btn2");
+		var arr3 = [12,5,3,6];
+		let select = document.getElementById("select");
+		let index = select.options[select.selectedIndex].value;
+		if(index == 1){
+			arr3 = [12,5,3,6];
+		}else if(index == 2){
+			FCFS();
+		}else if(index == 3){
+			arr3 = [8,4,9,5];	
+		}else if(index ==4){
+			arr3 = [9,4,10,8];
+		}
+		for(let i=0;i<arr3.length;i++){
+		arr.push(new work("work"+(i+1)));
+		arr[i].len = arr3[i];
+
+		arr[i].createListItem();
+		arr2.push(arr[i]);
+		}
+
+
+		function click(){
+
+			if(arr.length==0){
+				for(let i=0;i<arr3.length;i++){
+					arr2[i].init();
+					arr.push(arr2[i]);
+				}
+			}
+			startjin()
+		}
+		btn2.onclick = click;
+		
+		select.onchange = function(){
+
+			let index = select.options[select.selectedIndex].value;
+			if(index == 1){
+				arr3 = [12,5,3,6];
+			}else if(index == 2){
+				FCFS();
+			}else if(index == 3){
+				arr3 = [8,4,9,5];	
+			}else if(index ==4){
+				arr3 = [9,4,10,8];
+			}
+				if(arr.length>0) arr.length=0;
+				for(let i=0;i<arr3.length;i++){
+					arr2[i].len = arr3[i];
+					arr2[i].init();
+					arr.push(arr2[i]);
+				}
+				console.log(arr2);
+		}
+	    function startjin(){
+			let runTime = 0;
+			for(let i=0;i<arr.length;i++){
+				arr[i].start();
+			}
+			function HRRF (){
+				let t,i,j,timer;
+
+					timer = setInterval(function(){
+						if(arr.length==0){
+							 clearInterval(timer);
+							 btn2.disabled = false;
+						}
+						j = arr.length;
+						for(i=0;i<j;i++){
+							runTime++;
+							t = arr[i].run(runTime);
+							console.log(runTime,arr[i].name,arr[i].race);
+							if(t==2) {
+								arr.splice(i,1)
+								j--;
+								i--;
+							}
+						}
+					},50);						
+
+				
+			}
+
+			function FCFS (){
+				let t,i,j=-1,timer;
+				arr.sort(function (a,b){
+					return a.arrive-b.arrive;
+				})
+
+				timer = setInterval(function(){
+					t = arr[0].run(runTime+1);
+					if(t==2) {
+						arr.splice(0,1)
+					}
+					runTime++;
+					
+					if(arr.length==0) 
+					{
+						clearInterval(timer);
+						btn2.disabled = false;
+					}
+
+					
+				},100);					
+			}
+			function  SRTF(){
+				let t,i,j=-1,timer;
+				arr.sort(function (a,b){
+					return a.len-b.len;
+				})
+				console.log(arr);
+				timer = setInterval(function(){
+					j = arr.length;
+					for(i=0;i<j;i++){
+						console.log(arr[i].name);
+						t = arr[i].run(runTime,1);
+						if(t!=0){
+							runTime++;
+						}
+						if(t==1){
+							break;
+						}
+						if(t==2) {
+
+							arr.splice(i,1)
+
+							if(arr.length==0) 
+							{
+								clearInterval(timer);
+								btn2.disabled = false;
+							}
+							break;
+						}
+						
+					}
+					
+					},30);
+				}
+
+			function SJF(){
+				let t,i,j=-1,p=-1,timer;
+				arr.sort(function (a,b){
+					return a.len -b.len;
+				})
+				console.log(arr);
+				timer = setInterval(function(){
+					j = arr.length;
+					if(p==-1){
+						for(i=0;i<j;i++){
+						t = arr[i].run(runTime);
+
+						if(t==1){
+							p = i;
+							break;
+							}
+						}
+						runTime++;
+					}else{
+						t = arr[p].run(runTime+1);
+						runTime++;
+						if(t==2){
+								arr.splice(p,1)
+								p=-1;	
+						}
+						if(arr.length==0) 
+						{
+							clearInterval(timer);
+							btn2.disabled = false;
+						}
+					}
+				},20);						
+			}
+
+			btn2.disabled = true;
+
+			let index = select.options[select.selectedIndex].value;
+			if(index == 1){
+				HRRF();
+			}else if(index == 2){
+				FCFS();
+			}else if(index == 3){
+				SRTF(); 	
+			}else if(index ==4){
+				SJF();	
+			}
+			
+
+		}
+		function random(left,right){
+			return Math.floor(Math.random() * left + (right - left));
+		}
+	</script>
+</body>
+</html>
